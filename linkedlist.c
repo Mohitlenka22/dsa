@@ -1,5 +1,8 @@
+//linked list
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 struct node
 {
@@ -12,14 +15,21 @@ void insertFirst(int data)
 {
     struct node *link = (struct node *)malloc(sizeof(struct node));
     link->data = data;
-    link->next = first;
-    first = link;
+    if (first == NULL)
+    {
+        first = link;
+        first->next = NULL;
+    }
+    else
+    {
+        link->next = first;
+        first = link;
+    }
 }
 
 void insertBefore(int key, int data)
 {
     struct node *link = (struct node *)malloc(sizeof(struct node));
-    link->data = data;
     struct node *curr = first;
     struct node *prev = first;
     while (curr->next != NULL && curr->data != key)
@@ -29,39 +39,45 @@ void insertBefore(int key, int data)
     }
     if (curr->data == key)
     {
-        link->next = curr;
+        link->data = data;
         prev->next = link;
+        link->next = curr;
     }
 }
 
-void insertEnd(int data)
+void insertAfter(int key, int data)
+{
+    struct node *link = (struct node *)malloc(sizeof(struct node)), *temp = first;
+    while (temp->next != NULL && temp->data != key)
+    {
+        temp = temp->next;
+    }
+    if (temp->data == key)
+    {
+        link->data = data;
+        link->next = temp->next;
+        temp->next = link;
+    }
+}
+
+void insertLast(int data)
 {
     struct node *link = (struct node *)malloc(sizeof(struct node));
-    link->data = data;
-    link->next = NULL;
-    if (first == NULL)
-    {
-        first = link;
-    }
     struct node *curr = first;
+    link->data = data;
     while (curr->next != NULL)
     {
         curr = curr->next;
     }
-    curr->next = link;
-}
-
-void deleteFirst()
-{
     if (first == NULL)
     {
-        return;
+        first = link;
+        first->next = NULL;
     }
     else
     {
-        struct node *link = first->next;
-        free(first);
-        first = link;
+        curr->next = link;
+        link->next = NULL;
     }
 }
 void delete (int data)
@@ -76,37 +92,23 @@ void delete (int data)
     if (curr == first)
     {
         first = first->next;
-        free(first);
+        free(curr);
     }
-    if (curr->data == data)
+    else if (curr->data == data && curr->next != NULL)
     {
         prev->next = curr->next;
         free(curr);
     }
-}
-void deleteLast()
-{
-    if (first == NULL)
+    else if (curr->data == data && curr->next == NULL)
     {
-        return;
+        prev->next = NULL;
+        free(curr);
     }
-    if (first->next == NULL)
-    {
-        free(first);
-        first = NULL;
-    }
-    struct node *curr = first;
-    while (curr->next->next != NULL)
-    {
-        curr = curr->next;
-    }
-    free(curr->next);
-    curr->next = NULL;
 }
 void display()
 {
     struct node *link = first;
-    while (first != NULL)
+    while (link != NULL)
     {
         printf("%d ", link->data);
         link = link->next;
@@ -115,17 +117,59 @@ void display()
 
 int main()
 {
-    insertFirst(20);
-    insertFirst(11);
-    insertEnd(30);
-    insertEnd(40);
-    insertEnd(50);
-    // insertFirst(11);
-    insertBefore(40, 22);
-    delete (11);
-    // deleteFirst();
-    // deleteLast();
-    display();
+
+    while (true)
+    {
+        printf("Select an option : \n 1.insertFirst\n 2.insertLast\n 3.insertBefore\n 4.insertAfter\n 5.delete\n6.display\n7.quit\n");
+        int option;
+        scanf("%d", &option);
+        int data, key;
+        switch (option)
+        {
+        case 1:
+
+            printf("Enter element: ");
+            scanf("%d", &data);
+            insertFirst(data);
+            break;
+        case 2:
+
+            printf("Enter element: ");
+            scanf("%d", &data);
+            insertLast(data);
+            break;
+        case 3:
+
+            printf("Enter element: ");
+            scanf("%d", &data);
+            printf("Enter key: ");
+            scanf("%d", &key);
+            insertBefore(key, data);
+            break;
+        case 4:
+
+            printf("Enter element: ");
+            scanf("%d", &data);
+            printf("Enter key: ");
+            scanf("%d", &key);
+            insertAfter(key, data);
+            break;
+        case 5:
+
+            printf("Enter element: ");
+            scanf("%d", &key);
+            delete (key);
+            break;
+        case 6:
+            printf("List: ");
+            display();
+            break;
+        case 7:
+            exit(0);
+        default:
+            printf("Enter valid option");
+        }
+    }
 
     return 0;
 }

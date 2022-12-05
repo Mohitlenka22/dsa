@@ -1,95 +1,113 @@
-//C program to Demonstrate Priority Queue
-#include<stdio.h>
-#include<limits.h>
-#define MAX 100
+// C++ program for the above approach
 
+#include <stdio.h>
 
+// Structure for the elements in the
+// priority queue
+struct item {
+	int value;
+	int priority;
+};
 
-int rear = -1;
+// Store the element of a priority queue
+item pr[100000];
 
+// Pointer to the last index
+int size = -1;
 
-int priority_q[MAX];
-int pqPriority[MAX];
-
-
-
-int isEmpty(){
-    return rear == -1;
-}
-
-int isFull(){
-    return rear == MAX - 1;
-}
-void enqueue(int data, int priority)
+// Function to insert a new element
+// into priority queue
+void enqueue(int value, int priority)
 {
-    if(!isFull()){
-        
-        rear++;
- 
-        priority_q[rear] = data;
-        pqPriority[rear] = priority;
-    }
+	// Increase the size
+	size++;
+
+	// Insert the element
+	pr[size].value = value;
+	pr[size].priority = priority;
 }
 
+// Function to check the top element
 int peek()
 {
-    int maxPriority = INT_MIN;
-    int indexPos = -1;
- 
-    for (int i = 0; i <= rear; i++) { 
-       
-        if (maxPriority == pqPriority[i] && indexPos > -1 && priority_q[indexPos] < priority_q[i]) 
-        {
-            maxPriority = pqPriority[i];
-            indexPos = i;
-        }
-        
-        else if (maxPriority < pqPriority[i]) {
-            maxPriority = pqPriority[i];
-            indexPos = i;
-        }
-    }
-    
-    return indexPos;
+	int highestPriority = INT_MIN;
+	int ind = -1;
+
+	// Check for the element with
+	// highest priority
+	for (int i = 0; i <= size; i++) {
+
+		// If priority is same choose
+		// the element with the
+		// highest value
+		if (highestPriority
+				== pr[i].priority
+			&& ind > -1
+			&& pr[ind].value
+				< pr[i].value) {
+			highestPriority = pr[i].priority;
+			ind = i;
+		}
+		else if (highestPriority
+				< pr[i].priority) {
+			highestPriority = pr[i].priority;
+			ind = i;
+		}
+	}
+
+	// Return position of the element
+	return ind;
 }
 
+// Function to remove the element with
+// the highest priority
 void dequeue()
 {
-    if(!isEmpty())
-    {
-        int indexPos = peek();
-        for (int i = indexPos; i < rear; i++) {
-            priority_q[i] = priority_q[i + 1];
-            pqPriority[i] = pqPriority[i + 1];
-        }
- 
-        rear--;
-    }
+	// Find the position of the element
+	// with highest priority
+	int ind = peek();
+
+	// Shift the element one index before
+	// from the position of the element
+	// with highest priority is found
+	for (int i = ind; i < size; i++) {
+		pr[i] = pr[i + 1];
+	}
+
+	// Decrease the size of the
+	// priority queue by one
+	size--;
 }
 
-void display(){
-    for (int i = 0; i <= rear; i++) {
-        printf("(%d, %d)\n",priority_q[i], pqPriority[i]);
-    } 
-}
 // Driver Code
 int main()
 {
-    enqueue(5, 1);
-    enqueue(10, 3);
-    enqueue(15, 4);
-    enqueue(20, 5);
-    enqueue(500, 2);
-    
-    printf("Before Dequeue : \n");
-    display();
- 
-    // Dequeue the top element
-    dequeue(); // 20 dequeued
-    dequeue(); // 15 dequeued
-    
-    printf("\nAfter Dequeue : \n");
-    display();
+	// Function Call to insert elements
+	// as per the priority
+	enqueue(10, 2);
+	enqueue(14, 4);
+	enqueue(16, 4);
+	enqueue(12, 3);
 
-    return 0;
+	// Stores the top element
+	// at the moment
+	int ind = peek();
+
+	cout << pr[ind].value << endl;
+
+	// Dequeue the top element
+	dequeue();
+
+	// Check the top element
+	ind = peek();
+	cout << pr[ind].value << endl;
+
+	// Dequeue the top element
+	dequeue();
+
+	// Check the top element
+	ind = peek();
+	cout << pr[ind].value << endl;
+
+	return 0;
 }
